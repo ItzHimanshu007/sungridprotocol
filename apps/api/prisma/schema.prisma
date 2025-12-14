@@ -1,0 +1,277 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(cuid())
+  walletAddress   String    @unique
+  ensName         String?
+  displayName     String?
+  email           String?
+  avatarUrl       String?
+  role            UserRole  @default(CONSUMER)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  meters          SmartMeter[]
+  listings        Listing[]      @relation("SellerListings")
+  purchases       Order[]        @relation("BuyerOrders")
+  sales           Order[]        @relation("SellerOrders")
+  notifications   Notification[]
+  
+  // Stats
+  totalEnergyProduced   Decimal   @default(0)
+  totalEnergySold       Decimal   @default(0)
+  totalEnergyBought     Decimal   @default(0)
+  reputationScore       Int       @default(50)
+  
+  @@index([walletAddress])
+}
+
+enum UserRole {
+  CONSUMER
+  PRODUCER
+  BOTH
+  ADMIN
+}
+
+model SmartMeter {
+  id              String    @id @default(cuid())
+  meterId         Int       @unique
+  hardwareHash    String    @unique
+  gridZone        Int
+  latitude        Decimal?
+  longitude       Decimal?
+  installationDate DateTime?
+  manufacturer    String?
+  model           String?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  ownerId         String
+  owner           User      @relation(fields: [ownerId], references: [id])
+  readings        MeterReading[]
+  
+  // Stats
+  totalProduced   Decimal   @default(0)
+  totalConsumed   Decimal   @default(0)
+  lastReadingAt   DateTime?
+  
+  @@index([ownerId])
+  @@index([gridZone])
+}
+
+model MeterReading {
+  id              String    @id @default(cuid())
+  meterId         String
+  meter           SmartMeter @relation(fields: [meterId], references: [id])
+  
+  kWhProduced     Decimal
+  kWhConsumed     Decimal
+  netProduction   Decimal
+  timestamp       DateTime
+  signature       String?
+  
+  // Blockchain reference
+  txHash          String?
+  tokenId         Int?
+  
+  createdAt       DateTime  @default(now())
+  
+  @@index([meterId, timestamp])
+}
+
+model Listing {
+  id              String    @id @default(cuid())
+  listingId       Int       @unique  // On-chain listing ID
+  
+  sellerId        String
+  seller          User      @relation("SellerListings", fields: [sellerId], references: [id])
+  
+  tokenId         Int
+  kWhAmount       Decimal
+  remainingAmount Decimal
+  pricePerKwh     Decimal
+  gridZone        Int
+  
+  createdAt       DateTime  @default(now())
+  expiresAt       DateTime
+  isActive        Boolean   @default(true)
+  
+  // Blockchain reference
+  txHash          String?
+  
+  orders          Order[]
+  
+  @@index([sellerId])
+  @@index([gridZone, isActive])
+  @@index([isActive, expiresAt])
+}
+
+model Order {
+  id              String    @id @default(cuid())
+  orderId         Int       @unique  // On-chain order ID
+  
+  listingId       String
+  listing         Listing   @relation(fields: [listingId], references: [id])
+  
+  buyerId         String
+  buyer           User      @relation("BuyerOrders", fields: [buyerId], references: [id])
+  
+  sellerId        String
+  seller          User      @relation("SellerOrders", fields: [sellerId], references: [id])
+  
+  kWhAmount       Decimal
+  pricePerKwh     Decimal
+  totalPrice      Decimal
+  platformFee     Decimal
+  
+  status          OrderStatus @default(PENDING)
+  
+  createdAt       DateTime  @default(now())
+  confirmedAt     DateTime?
+  deliveredAt     DateTime?
+  completedAt     DateTime?
+  
+  // Blockchain reference
+  txHash          String?
+  
+  // Dispute
+  disputeReason   String?
+  disputeRaisedAt DateTime?
+  disputeResolvedAt DateTime?
+  
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([status])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  DELIVERED
+  COMPLETED
+  DISPUTED
+  CANCELLED
+  REFUNDED
+}
+
+model GridZone {
+  id              String    @id @default(cuid())
+  zoneId          Int       @unique
+  name            String
+  neighborhood    String?   // Indian neighborhood/locality name
+  city            String?   // City name (Jaipur, Delhi, etc.)
+  state           String?   // State name  
+  region          String
+  country         String    @default("India")
+  postalCode      String?   // PIN code
+  
+  // Geographic bounds
+  centerLat       Decimal
+  centerLng       Decimal
+  radiusKm        Decimal   @default(5)
+  
+  // Current stats
+  totalSupply     Decimal   @default(0)
+  totalDemand     Decimal   @default(0)
+  currentPrice    Decimal   @default(0)
+  demandMultiplier Decimal  @default(1)
+  
+  // INR pricing
+  pricePerKwhINR  Decimal   @default(0)
+  
+  lastUpdated     DateTime  @default(now())
+  
+  @@index([zoneId])
+  @@index([city, state])
+}
+
+
+model PriceHistory {
+  id              String    @id @default(cuid())
+  gridZone        Int
+  price           Decimal
+  demandMultiplier Decimal
+  supplyMultiplier Decimal
+  timeMultiplier  Decimal
+  timestamp       DateTime  @default(now())
+  
+  @@index([gridZone, timestamp])
+}
+
+model Notification {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  
+  type            NotificationType
+  title           String
+  message         String
+  data            Json?
+  
+  isRead          Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  
+  @@index([userId, isRead])
+}
+
+enum NotificationType {
+  ORDER_CREATED
+  ORDER_CONFIRMED
+  ORDER_DELIVERED
+  ORDER_COMPLETED
+  ORDER_DISPUTED
+  LISTING_SOLD
+  LISTING_EXPIRED
+  ENERGY_MINTED
+  PRICE_ALERT
+  SYSTEM
+}
+
+model Transaction {
+  id              String    @id @default(cuid())
+  txHash          String    @unique
+  blockNumber     Int
+  from            String
+  to              String
+  value           String
+  gasUsed         String
+  
+  type            TransactionType
+  status          TransactionStatus @default(PENDING)
+  
+  // Reference to related entity
+  referenceId     String?
+  referenceType   String?
+  
+  createdAt       DateTime  @default(now())
+  confirmedAt     DateTime?
+  
+  @@index([txHash])
+  @@index([from])
+  @@index([to])
+}
+
+enum TransactionType {
+  MINT
+  LIST
+  PURCHASE
+  CANCEL
+  CONFIRM
+  WITHDRAW
+}
+
+enum TransactionStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}

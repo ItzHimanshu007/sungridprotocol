@@ -1,0 +1,15 @@
+node_modules
+.next
+.turbo
+logs
+*.log
+.env
+.env.local
+packages/contracts/artifacts
+packages/contracts/cache
+packages/contracts/typechain-types
+scripts/test-transactions.mjs
+scripts/seed-marketplace.mjs
+docs
+*.md
+!README.md
