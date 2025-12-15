@@ -1,147 +1,222 @@
 # 🌞 SunGrid Protocol
 
-**Decentralized Peer-to-Peer Energy Trading Platform**
+**Decentralized Peer-to-Peer Renewable Energy Trading**
+
+> SunGrid Protocol enables trustless, peer-to-peer renewable energy trading using blockchain-verified smart meters and real-time dynamic pricing.
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/ItzHimanshu007/unstopable_lnmiit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Deployed on Sepolia](https://img.shields.io/badge/Network-Sepolia%20Testnet-blue)](https://sepolia.etherscan.io/)
+[![Network](https://img.shields.io/badge/Network-Sepolia%20Testnet-blue)](https://sepolia.etherscan.io/)
 
-SunGrid Protocol is a next-generation decentralized application (dApp) that empowers communities to trade renewable energy directly. By leveraging Ethereum smart contracts, it eliminates middlemen, allowing solar energy producers to sell excess power to neighbors securely, transparently, and efficiently.
+SunGrid Protocol is a next-generation decentralized application (dApp) that empowers communities to trade renewable energy directly, without centralized utilities or intermediaries.  
+By leveraging Ethereum smart contracts, Chainlink oracles, and ERC-1155 energy tokens, SunGrid creates a transparent, efficient, and community-driven energy marketplace.
 
 ---
 
 ## 🚀 Live Demo
 
-**Frontend Application:** [https://sungrid-mz6jsm8jr-aditya-gautams-projects-496c032b.vercel.app](https://sungrid-mz6jsm8jr-aditya-gautams-projects-496c032b.vercel.app)
+Frontend:  
+https://sungrid-mz6jsm8jr-aditya-gautams-projects-496c032b.vercel.app
 
-**Network:** Ethereum Sepolia Testnet  
-**Chain ID:** 11155111
+Network: Ethereum Sepolia Testnet  
+Chain ID: 11155111
+
+---
+
+## ❗ Problem Statement
+
+Traditional energy systems are centralized, opaque, and inefficient.  
+Small-scale renewable producers cannot sell excess energy directly and must rely on utility companies with fixed tariffs, delayed settlements, and energy losses.
+
+There is no transparent system to:
+- Verify real energy production
+- Enable local peer-to-peer energy trading
+- Incentivize community-level renewable adoption
+
+---
+
+## 💡 Solution — SunGrid Protocol
+
+SunGrid Protocol introduces a decentralized energy marketplace where:
+- Energy is tokenized as ERC-1155 EnergyTokens
+- Smart meters are verified on-chain
+- Pricing is determined dynamically via Chainlink oracles
+- Payments are secured using escrow-based smart contracts
+
+This removes intermediaries and enables trustless, local energy exchange.
+
+---
+
+## 🔗 Why Blockchain?
+
+Blockchain enables:
+- Trustless settlement without utilities
+- Tamper-proof energy records
+- Transparent pricing and escrow
+- Permissionless participation
+
+Ethereum smart contracts act as neutral infrastructure ensuring fairness and automation.
 
 ---
 
 ## ✨ Key Features
 
-*   **⚡ Peer-to-Peer Marketplace**: Buy and sell energy directly using crypto. No utility company markups.
-*   **🏭 Decentralized Minting**: Verified producers can mint `EnergyTokens` (ERC-1155) representing real kWh generated.
-*   **🔮 Dynamic Pricing Oracle**: Real-time energy pricing based on supply, demand, and grid load, integrated with **Chainlink** price feeds.
-*   **📊 Interactive Dashboard**: track consumption, production, and cost savings with beautiful visualizations (Recharts).
-*   **🔐 Smart Meter Registry**: On-chain identity verification for smart meters ensures only real energy is traded.
-*   **🌍 Impact Tracking**: Real-time calculation of CO₂ offset and environmental contributions.
-*   **🛡️ Escrow Settlement**: Smart contracts hold funds securely until energy delivery is verified.
+- ⚡ Peer-to-Peer Marketplace  
+  Buy and sell renewable energy directly using crypto.
+
+- 🏭 Decentralized Energy Minting  
+  Verified producers mint ERC-1155 EnergyTokens representing real kWh generated.
+
+- 🔮 Dynamic Pricing Oracle  
+  Real-time pricing based on supply, demand, and grid load using Chainlink.
+
+- 📊 Interactive Analytics Dashboard  
+  Track production, consumption, savings, and CO₂ offset.
+
+- 🔐 Smart Meter Registry  
+  On-chain identity verification for smart meters.
+
+- 🌍 Environmental Impact Tracking  
+  Automatic CO₂ offset and sustainability metrics.
+
+- 🛡️ Escrow-Based Settlement  
+  Funds released only after verified energy delivery.
 
 ---
 
 ## 🛠️ Technology Stack
 
 ### Frontend
-*   **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
-*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) + `shadcn/ui`
-*   **Web3 Integration**: [Wagmi](https://wagmi.sh/), [Viem](https://viem.sh/), [RainbowKit](https://www.rainbowkit.com/)
-*   **State Management**: [TanStack Query](https://tanstack.com/query) + Zustand
-*   **Maps**: React Leaflet
-*   **Storage**: IPFS (via `ipfs-http-client`)
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS + shadcn/ui
+- Wagmi, Viem, RainbowKit
+- TanStack Query + Zustand
+- Recharts
+- React Leaflet
+- IPFS (ipfs-http-client)
+
+---
+## 🏗️ System Architecture
+
+graph TD
+    U[User / Prosumer] -->|Connect Wallet| FE[Next.js Frontend]
+    FE -->|Read / Write| BC[Ethereum Smart Contracts]
+    FE -->|Upload / Fetch Metadata| IPFS[IPFS Storage]
+
+    subgraph On-Chain Layer
+        BC --> ET[EnergyToken (ERC-1155)]
+        BC --> MP[Energy Marketplace]
+        BC --> SMR[Smart Meter Registry]
+        BC --> PO[Pricing Oracle]
+        PO -->|Price Feeds| CL[Chainlink Oracle]
+    end
+
+    subgraph Off-Chain Layer
+        SM[Smart Meters / IoT Devices] -->|Energy Data| SMR
+
+---
 
 ### Blockchain
-*   **Language**: Solidity (v0.8.24)
-*   **Framework**: [Foundry](https://getfoundry.sh/) (Forge, Cast, Anvil)
-*   **Tokens**: ERC-1155 (EnergyToken)
-*   **Oracles**: Chainlink Data Feeds
-*   **Deployment**: Sepolia Testnet
+- Solidity ^0.8.24
+- Foundry (Forge, Cast, Anvil)
+- ERC-1155 EnergyToken
+- Chainlink Data Feeds
+- Ethereum Sepolia Testnet
 
 ---
 
-## 🏗️ Architecture
+⚠️ Challenges & Limitations
+	•	Smart meter integration requires certified IoT hardware
+	•	High-frequency micro-transactions need Layer-2 scaling
+	•	Energy trading regulations vary by region
+	•	Oracle accuracy depends on off-chain data reliability
 
-```mermaid
-graph TD
-    User[User] --> |Connects Wallet| UI[Next.js Frontend]
-    UI --> |Reads/Writes| Contract[Smart Contracts]
-    UI --> |Uploads Meta| IPFS[IPFS Storage]
-    
-    subgraph "On-Chain Layer"
-        Contract --> EnergyToken[EnergyToken (ERC1155)]
-        Contract --> Marketplace[Marketplace Logic]
-        Contract --> Registry[SmartMeter Registry]
-        Contract --> Oracle[Pricing Oracle]
-    end
-    
-    subgraph "External"
-        Oracle --> |Feeds| Chainlink[Chainlink Aggregators]
-    end
-```
+----
+
+🛣️ Roadmap
+
+Phase 1 (Current)
+	•	P2P energy marketplace
+	•	ERC-1155 energy tokens
+	•	Chainlink pricing oracle
+
+Phase 2
+	•	Layer-2 deployment (Polygon / Arbitrum)
+	•	IoT smart meter integration
+	•	DAO-based governance
+
+Phase 3
+	•	Carbon credit NFTs
+	•	Smart city & microgrid partnerships
+	•	Cross-region energy pools
+
+⸻
+
+🔐 Security & Assumptions
+	•	Solidity ^0.8.x overflow protection
+	•	Escrow-based buyer protection
+	•	Verified smart meter registry
+	•	Decentralized oracle assumptions
+
+⸻
+
+💻 Local Development Setup
+
+Prerequisites
+	•	Node.js 18+
+	•	Foundry
+	•	Git
 
 ---
 
-## 📜 Deployed Contracts (Sepolia)
-
-| Contract | Address |
-|----------|---------|
-| **EnergyToken** | `0x789511BC40FD93DC407a1BFF8C61daC8639B05e9` |
-| **Marketplace** | `0xe89362A753022081754eD93C6AB4E1a38b32456B` |
-| **PricingOracle** | `0x15E60A05947EB7DF040B36e57d3746815233Be03` |
-| **SmartMeterRegistry** | `0x834D77181C018849f53b2e7c7656cBcb260670bA` |
-| **ChainlinkEnergyOracle** | `0x08B65BFf8342BA5a1cDC0Cb28003a8e940B88884` |
-
----
-
-## 💻 Local Development Setup
-
-Follow these steps to run the full stack locally.
-
-### Prerequisites
-*   Node.js 18+
-*   Foundry (Forge, Anvil)
-*   Git
-
-### 1. Clone the Repository
-```bash
-git clone https://github.com/ItzHimanshu007/unstopable_lnmiit.git
-cd sungrid-protocol
-```
-
-### 2. Start Local Blockchain
-Start a local Ethereum node using Anvil.
-```bash
+Start Local Blockchain
 anvil --block-time 1
-```
 
-### 3. Deploy Contracts
-In a new terminal, deploy the smart contracts to your local node.
-```bash
+---
+
+Deploy Contracts
 cd packages/contracts
 forge build
-./deploy-local.sh 
-# Or: forge script script/Deploy.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
-```
-
-### 4. Configure Frontend
-Navigate to the web app and set up your environment variables.
-```bash
-cd apps/web
-npm install
-```
-Create a `.env.local` file with your local contract addresses (automatically logged during deployment).
-
-### 5. Run the Application
-```bash
-npm run dev
-```
-Open [http://localhost:3000](http://localhost:3000) to view the app.
+./deploy-local.sh
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1.  Fork the project
-2.  Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
+Run Frontend
+cd packages/contracts
+forge build
 
 ---
 
-## 📄 License
+Open http://localhost:3000
 
-Distributed under the MIT License. See `LICENSE` for more information.
+---
+
+🤝 Contributing
+	1.	Fork the repository
+	2.	Create a feature branch
+	3.	Commit your changes
+	4.	Open a Pull Request
+
+---
+
+📄 License
+
+Licensed under the MIT License.
+
+---
+
+### ✅ What to Do Now
+1. Go to your GitHub repo  
+2. Open `README.md`  
+3. Click ✏️ Edit  
+4. **Paste everything above**
+5. Commit changes
+
+If you want:
+- A **Table of Contents**
+- A **banner image**
+- A **judge-focused short README**
+- A **3-minute pitch from this README**
+
+Just say it 🚀
